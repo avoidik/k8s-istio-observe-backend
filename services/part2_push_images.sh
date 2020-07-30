@@ -5,13 +5,13 @@
 # license: MIT License
 # purpose: Push images to Dockerhub
 
-readonly -a arr=(a b c a d e f g h)
+readonly -a arr=("a" "b" "c" "d" "e" "f" "g" "h")
 # readonly -a arr=(a)
-readonly tag=1.4.0
+readonly tag="1.4.0"
 
 for i in "${arr[@]}"
 do
-  docker push "garystafford/go-srv-$i:$tag"
+  docker push "bluetangohub/go-srv-$i:$tag"
 done
 
-docker push "garystafford/angular-observe:$tag"
+docker push "bluetangohub/angular-observe:$tag"

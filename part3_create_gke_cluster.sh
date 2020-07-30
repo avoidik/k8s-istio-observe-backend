@@ -6,43 +6,50 @@
 # purpose: Create 3-node GKE cluster
 
 # Constants - CHANGE ME!
-readonly PROJECT='go-srv-demo'
-readonly CLUSTER='go-srv-demo-cluster'
+readonly PROJECT='serious-amp-280315'
+readonly CLUSTER='demo-project-cluster'
 readonly REGION='us-central1'
-readonly MASTER_AUTH_NETS='72.231.208.0/24'
-readonly GKE_VERSION='1.12.6-gke.10'
+readonly MASTER_AUTH_NETS='78.84.0.0/16'
+readonly GKE_VERSION='1.16.8-gke.15'
 readonly MACHINE_TYPE='n1-standard-2'
 
 # yes | gcloud components update
 # gcloud init # set new project
 
+# gcloud container get-server-config
+# gcloud compute machine-types list
+
 # Build a 3-node, single-region, multi-zone GKE cluster
-gcloud beta container \
-  --project ${PROJECT} clusters create ${CLUSTER} \
-  --region ${REGION} \
-  --no-enable-basic-auth \
-  --no-issue-client-certificate \
-  --cluster-version ${GKE_VERSION} \
-  --machine-type ${MACHINE_TYPE} \
-  --image-type COS \
+gcloud container clusters create ${CLUSTER} \
+  --project ${PROJECT} \
+  --addons HorizontalPodAutoscaling,HttpLoadBalancing \
+  --default-max-pods-per-node 110 \
   --disk-type pd-standard \
   --disk-size 200 \
-  --scopes https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
-  --num-nodes 1 \
-  --enable-stackdriver-kubernetes \
+  --enable-autorepair \
+  --enable-autoupgrade \
   --enable-ip-alias \
-  --enable-master-authorized-networks \
-  --master-authorized-networks ${MASTER_AUTH_NETS} \
+  --enable-stackdriver-kubernetes \
+  --image-type COS \
+  --machine-type ${MACHINE_TYPE} \
+  --metadata disable-legacy-endpoints=true \
   --network projects/${PROJECT}/global/networks/default \
   --subnetwork projects/${PROJECT}/regions/${REGION}/subnetworks/default \
-  --default-max-pods-per-node 110 \
-  --addons HorizontalPodAutoscaling,HttpLoadBalancing \
-  --metadata disable-legacy-endpoints=true \
-  --enable-autoupgrade \
-  --enable-autorepair
+  --num-nodes 1 \
+  --enable-master-authorized-networks \
+  --master-authorized-networks ${MASTER_AUTH_NETS} \
+  --no-enable-basic-auth \
+  --region ${REGION} \
+  --scopes gke-default \
+  --no-issue-client-certificate \
+  --cluster-version ${GKE_VERSION}
 
 # Get cluster credentials
 gcloud container clusters get-credentials ${CLUSTER} \
   --region ${REGION} --project ${PROJECT}
+
+kubectl create clusterrolebinding cluster-admin-binding \
+    --clusterrole=cluster-admin \
+    --user="$(gcloud config get-value core/account)"
 
 kubectl config current-context

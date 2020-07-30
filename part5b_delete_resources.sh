@@ -7,9 +7,10 @@
 
 kubectl delete namespace dev test
 
-helm delete --purge istio
-helm delete --purge istio-init
+istioctl manifest generate \
+  --set addonComponents.grafana.enabled=true \
+  --set addonComponents.prometheus.enabled=true \
+  --set addonComponents.kiali.enabled=true \
+  --set addonComponents.tracing.enabled=true | kubectl delete -f -
 
-kubectl get all -n dev
-kubectl get all -n test
-istioctl get all
+# kubectl delete namespace istio-system

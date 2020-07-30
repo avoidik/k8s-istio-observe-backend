@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
       - name: service-f
-        image: registry.hub.docker.com/garystafford/go-srv-f:1.4.0
+        image: registry.hub.docker.com/bluetangohub/go-srv-f:1.4.0
         resources:
         # requests:
         #   memory: 100M

@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
       - name: angular-ui
-        image: registry.hub.docker.com/garystafford/angular-observe:1.4.0
+        image: registry.hub.docker.com/bluetangohub/angular-observe:1.4.0
         resources:
         # requests:
         #   memory: 100M
